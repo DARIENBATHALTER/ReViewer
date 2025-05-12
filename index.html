@@ -802,35 +802,35 @@
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
-                    </div>
+                </div>
                     <div class="star-button" data-value="4">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button" data-value="3">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button" data-value="2">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button" data-value="1">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                 </div>
                 <button id="filterSubmitButton">Submit</button>
             </fieldset>
@@ -1271,19 +1271,19 @@
                 console.log("Filter submit button clicked, selected ratings:", selectedStarRatings);
                 
                 if (selectedStarRatings.length === 0) {
-                    alert("Please select at least one star rating.");
-                    return;
-                }
-    
+                alert("Please select at least one star rating.");
+                return;
+            }
+
                 filteredReviewsData = allReviewsData.filter(review => selectedStarRatings.includes(review.rating));
                 console.log("Filtered data count:", filteredReviewsData.length);
                 
-                populateResultsTable(filteredReviewsData);
-                starFilterSection.style.display = 'none';
-                resultsTableSection.style.display = 'block';
-                mainContainer.classList.add('table-view-active');
-                keywordSearchInput.value = ''; // Reset keyword search
-            });
+            populateResultsTable(filteredReviewsData);
+            starFilterSection.style.display = 'none';
+            resultsTableSection.style.display = 'block';
+            mainContainer.classList.add('table-view-active');
+            keywordSearchInput.value = ''; // Reset keyword search
+        });
         }
 
         keywordSearchInput.addEventListener('input', () => {
@@ -1508,37 +1508,54 @@
                 outerDiv.appendChild(reviewCard);
 
                 contentArea = document.createElement('div');
+                contentArea.style.position = 'absolute';
+                contentArea.style.top = '75px';    /* Adjusted for better visual balance */
                 contentArea.style.overflowY = 'auto';
                 contentArea.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif';
                 contentArea.style.color = '#000';
                 contentArea.style.wordBreak = 'break-word';
                 reviewCard.appendChild(contentArea);
             } else if (format === 'fullscreenLight' || format === 'fullscreenDark') {
+                // Simplified fullscreen view
                 outerDiv.style.width = RENDER_STYLES[format].width;
                 outerDiv.style.height = RENDER_STYLES[format].height;
                 outerDiv.style.position = 'relative';
                 outerDiv.style.backgroundColor = (format === 'fullscreenDark' ? '#1f1f1f' : '#ffffff');
+                outerDiv.style.borderRadius = '12px';
+                outerDiv.style.overflow = 'hidden';
                 outerDiv.style.display = 'flex';
                 outerDiv.style.flexDirection = 'column';
-                outerDiv.style.borderRadius = '12px'; // Add rounded corners
-                outerDiv.style.overflow = 'hidden'; // Ensure rounded corners are visible
-                outerDiv.style.padding = '10px'; // Reduced padding to minimal
+                outerDiv.style.alignItems = 'stretch'; // Changed from 'center' to 'stretch'
+                outerDiv.style.padding = '10px'; // Add padding directly to outer div
                 
-                // Add the header image directly to the outer div
+                // Main content container - fill full width
+                const contentContainer = document.createElement('div');
+                contentContainer.style.width = '100%';
+                contentContainer.style.display = 'flex';
+                contentContainer.style.flexDirection = 'column';
+                contentContainer.style.flex = '1';
+                contentContainer.style.boxSizing = 'border-box';
+                // Removed maxWidth limit
+                outerDiv.appendChild(contentContainer);
+                
+                // Header image - simple implementation filling full width
                 const headerImg = document.createElement('img');
                 headerImg.src = (format === 'fullscreenLight' ? imageData.headerlight : imageData.headerdark);
-                headerImg.style.width = '100%';
-                headerImg.style.height = '120px'; // Fixed height for consistent appearance
-                headerImg.style.objectFit = 'fill'; // Changed to 'fill' to stretch the image
-                headerImg.style.marginBottom = '15px'; // Space between header and content
-                outerDiv.appendChild(headerImg);
-
+                headerImg.style.width = '100%'; // Fill horizontally
+                headerImg.style.height = 'auto'; // Keep proportions
+                headerImg.style.objectFit = 'contain'; // Don't crop
+                headerImg.style.marginBottom = '20px';
+                headerImg.style.display = 'block';
+                contentContainer.appendChild(headerImg);
+                
+                // Content area - full width
                 contentArea = document.createElement('div');
                 contentArea.classList.add('single-review-content-area');
                 contentArea.style.color = (format === 'fullscreenDark' ? '#ffffff' : '#1c1c1e');
-                contentArea.style.padding = '0 5px'; // Reduced horizontal padding
+                contentArea.style.width = '100%';
                 contentArea.style.flex = '1';
-                outerDiv.appendChild(contentArea);
+                contentArea.style.overflow = 'auto';
+                contentContainer.appendChild(contentArea);
             } else {
                 // Fallback or error for unknown format
                 targetElement.textContent = 'Unknown view format selected.';
@@ -1599,10 +1616,10 @@
                 contentArea.appendChild(starsEl);
                 contentArea.appendChild(contentEl);
             } else {
-                contentArea.appendChild(titleEl);
+            contentArea.appendChild(titleEl);
                 contentArea.appendChild(authorEl);
-                contentArea.appendChild(starsEl);
-                contentArea.appendChild(contentEl);
+            contentArea.appendChild(starsEl);
+            contentArea.appendChild(contentEl);
             }
             
             if (forExport) {
