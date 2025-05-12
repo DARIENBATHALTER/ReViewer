@@ -703,6 +703,15 @@
             font-size: 1.1rem;
             color: #333;
         }
+        
+        .stream-keyword-search {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
 
         .filter-button-container {
             display: flex;
@@ -739,6 +748,32 @@
         .sort-button i, #streamFilterSubmitButton i {
             font-size: 0.9rem;
         }
+
+        /* Additional CSS for improved file input UI */
+        .file-name-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+
+        .replace-csv-button {
+            margin-top: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .replace-csv-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -751,6 +786,19 @@
                 </div>
                 <div class="subtitle">CSV Review Visualization Tool</div>
                 <div class="copyright">&copy; 2025 Darien Bathalter</div>
+            </div>
+
+            <div class="file-input-container">
+                <label class="file-input-label" id="chooseCsvLabel">
+                    Choose CSV File
+                    <input type="file" id="csvFile" accept=".csv">
+                </label>
+                <div class="file-name-container">
+                    <div class="file-name" id="fileName">No file selected</div>
+                    <button class="replace-csv-button" id="replaceCsvButton" style="display: none;">
+                        Replace CSV
+                    </button>
+                </div>
             </div>
 
             <div class="view-format-section">
@@ -782,57 +830,48 @@
                     </div>
                 </fieldset>
             </div>
-
-            <div class="file-input-container">
-                <label class="file-input-label">
-                    Choose CSV File
-                    <input type="file" id="csvFile" accept=".csv">
-                </label>
-                <div class="file-name" id="fileName">No file selected</div>
-            </div>
         </section>
 
         <div id="starFilterSection">
             <fieldset>
-                <legend>Select Rating(s):</legend>
+                <legend>Star Rating:</legend>
                 <div class="star-rating-buttons">
-                    <div class="star-button" data-value="5">
+                    <div class="star-button selected" data-value="5">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
+                    </div>
+                    <div class="star-button selected" data-value="4">
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="star-button selected" data-value="3">
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="star-button selected" data-value="2">
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="star-button selected" data-value="1">
+                        <i class="fas fa-star active"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
                 </div>
-                    <div class="star-button" data-value="4">
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star"></i>
-                </div>
-                    <div class="star-button" data-value="3">
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                </div>
-                    <div class="star-button" data-value="2">
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                </div>
-                    <div class="star-button" data-value="1">
-                        <i class="fas fa-star active"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                </div>
-                </div>
-                <button id="filterSubmitButton">Submit</button>
             </fieldset>
         </div>
 
@@ -865,47 +904,45 @@
         
         <!-- New Stream View Controls -->
         <div class="stream-controls" id="streamControlsSection">
+            <input type="search" id="streamKeywordSearch" class="stream-keyword-search" placeholder="Search by keyword in title or content...">
             <fieldset>
                 <legend>Filter by Star Rating:</legend>
                 <div class="star-rating-buttons">
-                    <div class="star-button stream-star-button" data-value="5">
+                    <div class="star-button stream-star-button selected" data-value="5">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                     </div>
-                    <div class="star-button stream-star-button" data-value="4">
+                    <div class="star-button stream-star-button selected" data-value="4">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <div class="star-button stream-star-button" data-value="3">
+                    <div class="star-button stream-star-button selected" data-value="3">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <div class="star-button stream-star-button" data-value="2">
+                    <div class="star-button stream-star-button selected" data-value="2">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                    <div class="star-button stream-star-button" data-value="1">
+                    <div class="star-button stream-star-button selected" data-value="1">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                     </div>
-                </div>
-                <div class="filter-button-container">
-                    <button id="streamFilterSubmitButton"><i class="fas fa-filter"></i> Apply Filter</button>
                 </div>
             </fieldset>
             
@@ -1031,6 +1068,10 @@
             resultsTableSection.style.display = 'none';
             allReviewsData = []; // Reset data
 
+            // Update UI to show replace button and hide the choose button
+            document.getElementById('chooseCsvLabel').style.display = 'none';
+            document.getElementById('replaceCsvButton').style.display = 'block';
+
             const reader = new FileReader();
             reader.onload = handleFileLoad;
             reader.onerror = () => {
@@ -1039,6 +1080,12 @@
             };
             reader.readAsText(file);
         }
+
+        // Add event listener for the replace button
+        document.getElementById('replaceCsvButton').addEventListener('click', function() {
+            // Trigger the file input click
+            document.getElementById('csvFile').click();
+        });
 
         // File Load Handler
         function handleFileLoad(event) {
@@ -1073,6 +1120,8 @@
                 } else {
                     starFilterSection.style.display = 'block';
                     setupFilterControlListeners();
+                    // Immediately apply filters to show all results
+                    applyTableFilters(true);
                 }
 
             } catch (err) {
@@ -1221,8 +1270,8 @@
 
         // Setup function to initialize all filter control listeners
         function setupFilterControlListeners() {
-            // Clear previous selections
-            selectedStarRatings = [];
+            // Initialize with all ratings selected
+            selectedStarRatings = [1, 2, 3, 4, 5];
             
             console.log("Setting up filter control listeners");
             
@@ -1230,7 +1279,7 @@
             const starButtons = document.querySelectorAll('.star-button:not(.stream-star-button)');
             console.log("Found", starButtons.length, "star buttons");
             
-            // Remove existing event listeners by cloning
+            // Remove existing event listeners by cloning but keep 'selected' class
             starButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
                 button.parentNode.replaceChild(newButton, button);
@@ -1238,7 +1287,7 @@
             
             // Add fresh event listeners
             document.querySelectorAll('.star-button:not(.stream-star-button)').forEach(button => {
-                button.classList.remove('selected'); // Reset selection state
+                // Don't remove 'selected' class, as we want them all selected by default
                 button.addEventListener('click', function() {
                     const value = parseInt(button.dataset.value);
                     console.log("Star button clicked:", value);
@@ -1252,38 +1301,38 @@
                     }
                     
                     console.log("Selected ratings:", selectedStarRatings);
-                    // Enable submit button if any stars are selected
-                    document.getElementById('filterSubmitButton').disabled = selectedStarRatings.length === 0;
+                    // Apply filters immediately
+                    applyTableFilters(false);
                 });
             });
-            
-            // Setup submit button by cloning to remove any previous listeners
-            const oldSubmitButton = filterSubmitButton;
-            const newSubmitButton = oldSubmitButton.cloneNode(true);
-            oldSubmitButton.parentNode.replaceChild(newSubmitButton, oldSubmitButton);
-            
-            // Get fresh reference to the new button
-            const freshFilterSubmitButton = document.getElementById('filterSubmitButton');
-            freshFilterSubmitButton.disabled = true; // Initially disabled until selections are made
-            
-            // Add fresh event listener
-            freshFilterSubmitButton.addEventListener('click', function() {
-                console.log("Filter submit button clicked, selected ratings:", selectedStarRatings);
-                
-                if (selectedStarRatings.length === 0) {
-                alert("Please select at least one star rating.");
-                return;
+        }
+        
+        // Apply table filters based on selected ratings
+        function applyTableFilters(initialLoad = false) {
+            // If no ratings selected, show no results
+            if (selectedStarRatings.length === 0) {
+                filteredReviewsData = [];
+            } else {
+                filteredReviewsData = allReviewsData.filter(review => 
+                    selectedStarRatings.includes(review.rating));
             }
-
-                filteredReviewsData = allReviewsData.filter(review => selectedStarRatings.includes(review.rating));
-                console.log("Filtered data count:", filteredReviewsData.length);
-                
-            populateResultsTable(filteredReviewsData);
-            starFilterSection.style.display = 'none';
+            
+            console.log("Filtered data count:", filteredReviewsData.length);
+            
+            // Keep the starFilterSection visible
+            starFilterSection.style.display = 'block';
+            
+            // Show results table
             resultsTableSection.style.display = 'block';
             mainContainer.classList.add('table-view-active');
-            keywordSearchInput.value = ''; // Reset keyword search
-        });
+            
+            // Populate table with filtered data
+            populateResultsTable(filteredReviewsData);
+            
+            // Clear keyword search when filters change
+            if (!initialLoad) {
+                keywordSearchInput.value = '';
+            }
         }
 
         keywordSearchInput.addEventListener('input', () => {
@@ -1430,11 +1479,18 @@
 
         function displayReviewsAsStream(reviews) {
             reviewsContainer.innerHTML = ''; // Clear existing stream
-            if (reviews.length === 0 && allReviewsData.length > 0) { // Check if allReviewsData has content
-                 reviewsContainer.innerHTML = '<p style="text-align:center;">No reviews to display for current selection.</p>';
-                 mainContainer.classList.remove('table-view-active');
-                 return;
+            
+            if (reviews.length === 0) {
+                // Show message when no reviews match the criteria
+                if (allReviewsData.length > 0) {
+                    reviewsContainer.innerHTML = '<p style="text-align: center; margin: 2rem 0; color: #666;">No reviews match your filter criteria.</p>';
+                } else {
+                    reviewsContainer.innerHTML = '<p style="text-align: center; margin: 2rem 0; color: #666;">No reviews to display. Please upload a CSV file.</p>';
+                }
+                return;
             }
+            
+            // Display the matching reviews
             reviews.forEach(r => createReviewCard(r.title, r.author, r.date, r.rating, r.content));
         }
         
@@ -1645,13 +1701,14 @@
 
         // Setup function for stream control listeners
         function setupStreamControlListeners() {
-            // Clear previous selections
-            streamSelectedStarRatings = [];
+            // Initialize with all ratings selected since all reviews are shown by default
+            streamSelectedStarRatings = [1, 2, 3, 4, 5];
+            let currentStreamSearchTerm = '';
             
-            // Setup star buttons for stream view
+            // Setup star buttons for stream view - maintain selected state
             const streamStarButtons = document.querySelectorAll('.stream-star-button');
             
-            // Remove existing event listeners by cloning
+            // Remove existing event listeners by cloning but preserve 'selected' class
             streamStarButtons.forEach(button => {
                 const newButton = button.cloneNode(true);
                 button.parentNode.replaceChild(newButton, button);
@@ -1659,7 +1716,7 @@
             
             // Add fresh event listeners
             document.querySelectorAll('.stream-star-button').forEach(button => {
-                button.classList.remove('selected'); // Reset selection state
+                // Don't reset selection state since we want all selected by default
                 button.addEventListener('click', function() {
                     const value = parseInt(button.dataset.value);
                     
@@ -1671,28 +1728,69 @@
                         streamSelectedStarRatings.push(value);
                     }
                     
-                    // Enable submit button if any stars are selected
-                    streamFilterSubmitButton.disabled = streamSelectedStarRatings.length === 0;
+                    // Auto-apply filter when button is toggled
+                    applyStreamFilters();
                 });
             });
             
-            // Setup stream filter submit button
-            const oldStreamSubmitButton = streamFilterSubmitButton;
-            const newStreamSubmitButton = oldStreamSubmitButton.cloneNode(true);
-            oldStreamSubmitButton.parentNode.replaceChild(newStreamSubmitButton, oldStreamSubmitButton);
+            // Setup keyword search
+            const streamKeywordSearch = document.getElementById('streamKeywordSearch');
             
-            // Get fresh reference and add listener
-            document.getElementById('streamFilterSubmitButton').addEventListener('click', function() {
-                if (streamSelectedStarRatings.length === 0) {
-                    alert("Please select at least one star rating.");
-                    return;
+            // Remove previous event listeners
+            const newSearchInput = streamKeywordSearch.cloneNode(true);
+            streamKeywordSearch.parentNode.replaceChild(newSearchInput, streamKeywordSearch);
+            
+            // Add event listener for keyword search
+            document.getElementById('streamKeywordSearch').addEventListener('input', function() {
+                currentStreamSearchTerm = this.value.toLowerCase();
+                applyStreamFilters();
+            });
+            
+            // Function to apply both star and keyword filters
+            function applyStreamFilters(shouldSort = false, sortField = null) {
+                let filteredData = [...allReviewsData];
+                
+                // Apply star filter - if no ratings are selected, show no reviews
+                if (streamSelectedStarRatings.length > 0) {
+                    filteredData = filteredData.filter(review => 
+                        streamSelectedStarRatings.includes(review.rating));
+                } else {
+                    // If no star ratings are selected, show no reviews
+                    filteredData = [];
                 }
                 
-                const filteredStreamData = allReviewsData.filter(review => 
-                    streamSelectedStarRatings.includes(review.rating));
-                    
-                displayReviewsAsStream(filteredStreamData);
-            });
+                // Apply keyword filter if search term exists
+                if (currentStreamSearchTerm) {
+                    filteredData = filteredData.filter(review => 
+                        review.title.toLowerCase().includes(currentStreamSearchTerm) || 
+                        review.content.toLowerCase().includes(currentStreamSearchTerm) ||
+                        review.author.toLowerCase().includes(currentStreamSearchTerm));
+                }
+                
+                // Apply sorting if requested
+                if (shouldSort && sortField) {
+                    if (sortField === 'author') {
+                        filteredData.sort((a, b) => {
+                            if (authorSortDirection === 'asc') {
+                                return a.author.localeCompare(b.author);
+                            } else {
+                                return b.author.localeCompare(a.author);
+                            }
+                        });
+                    } else if (sortField === 'title') {
+                        filteredData.sort((a, b) => {
+                            if (titleSortDirection === 'asc') {
+                                return a.title.localeCompare(b.title);
+                            } else {
+                                return b.title.localeCompare(a.title);
+                            }
+                        });
+                    }
+                }
+                
+                // Display the filtered results
+                displayReviewsAsStream(filteredData);
+            }
             
             // Setup sort buttons
             // Author sort
@@ -1708,16 +1806,8 @@
                 icon.className = authorSortDirection === 'asc' ? 
                     'fas fa-sort-alpha-down' : 'fas fa-sort-alpha-up';
                 
-                // Sort data
-                const sortedData = [...allReviewsData].sort((a, b) => {
-                    if (authorSortDirection === 'asc') {
-                        return a.author.localeCompare(b.author);
-                    } else {
-                        return b.author.localeCompare(a.author);
-                    }
-                });
-                
-                displayReviewsAsStream(sortedData);
+                // Sort data with current filters applied
+                applyStreamFilters(true, 'author');
             });
             
             // Title sort
@@ -1733,17 +1823,55 @@
                 icon.className = titleSortDirection === 'asc' ? 
                     'fas fa-sort-alpha-down' : 'fas fa-sort-alpha-up';
                 
-                // Sort data
-                const sortedData = [...allReviewsData].sort((a, b) => {
-                    if (titleSortDirection === 'asc') {
-                        return a.title.localeCompare(b.title);
-                    } else {
-                        return b.title.localeCompare(a.title);
-                    }
-                });
-                
-                displayReviewsAsStream(sortedData);
+                // Sort data with current filters applied
+                applyStreamFilters(true, 'title');
             });
+            
+            // Extended version of applyStreamFilters that can also sort
+            function applyStreamFilters(shouldSort = false, sortField = null) {
+                let filteredData = [...allReviewsData];
+                
+                // Apply star filter - if no ratings are selected, show no reviews
+                if (streamSelectedStarRatings.length > 0) {
+                    filteredData = filteredData.filter(review => 
+                        streamSelectedStarRatings.includes(review.rating));
+                } else {
+                    // If no star ratings are selected, show no reviews
+                    filteredData = [];
+                }
+                
+                // Apply keyword filter if search term exists
+                if (currentStreamSearchTerm) {
+                    filteredData = filteredData.filter(review => 
+                        review.title.toLowerCase().includes(currentStreamSearchTerm) || 
+                        review.content.toLowerCase().includes(currentStreamSearchTerm) ||
+                        review.author.toLowerCase().includes(currentStreamSearchTerm));
+                }
+                
+                // Apply sorting if requested
+                if (shouldSort && sortField) {
+                    if (sortField === 'author') {
+                        filteredData.sort((a, b) => {
+                            if (authorSortDirection === 'asc') {
+                                return a.author.localeCompare(b.author);
+                            } else {
+                                return b.author.localeCompare(a.author);
+                            }
+                        });
+                    } else if (sortField === 'title') {
+                        filteredData.sort((a, b) => {
+                            if (titleSortDirection === 'asc') {
+                                return a.title.localeCompare(b.title);
+                            } else {
+                                return b.title.localeCompare(a.title);
+                            }
+                        });
+                    }
+                }
+                
+                // Display the filtered results
+                displayReviewsAsStream(filteredData);
+            }
         }
 
         // Helper function to update selected state
@@ -1898,3 +2026,4 @@
     </script>
 </body>
 </html>
+
