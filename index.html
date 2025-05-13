@@ -813,7 +813,13 @@
                     <div class="view-format-option">
                         <label>
                             <input type="radio" name="viewFormat" value="iphoneSim">
-                            iPhone Simulation, single view
+                            iPhone Simulation, light mode, single view
+                        </label>
+                    </div>
+                    <div class="view-format-option">
+                        <label>
+                            <input type="radio" name="viewFormat" value="iphoneSimDark">
+                            iPhone Simulation, dark mode, single view
                         </label>
                     </div>
                     <div class="view-format-option">
@@ -842,35 +848,35 @@
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
-                    </div>
+                </div>
                     <div class="star-button selected" data-value="4">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button selected" data-value="3">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button selected" data-value="2">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                     <div class="star-button selected" data-value="1">
                         <i class="fas fa-star active"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
-                    </div>
+                </div>
                 </div>
             </fieldset>
         </div>
@@ -1037,18 +1043,57 @@
         // Image Data URLs (replace with actual Base64 encoded images)
         const imageData = {
             blankiphone: 'blankiphone.png', 
+            blankiphoneDark: 'blankiphone_dark.png',
             headerdark: 'headerdark.png',   
             headerlight: 'headerlight.png'  
         };
         
-        // --- IMAGE DATA URLS ---
-        // Replace these with the actual Base64 encoded strings for your images
-        // To get Base64: You can use online converters or command-line tools.
-        // Example: `base64 -i blankiphone.png -o blankiphone.txt` then copy content of txt file.
+        // Check if images exist and load them with error handling
+        function preloadImages() {
+            console.log("Preloading images...");
+            
+            // Helper function to test image loading
+            function testImageURL(url, description) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        console.log(`✅ Successfully loaded ${description}: ${url}`);
+                        resolve(true);
+                    };
+                    img.onerror = () => {
+                        console.error(`❌ Failed to load ${description}: ${url}`);
+                        resolve(false);
+                    };
+                    img.src = url;
+                });
+            }
+            
+            // Test all images
+            Promise.all([
+                testImageURL(imageData.blankiphone, 'blankiphone (light)'),
+                testImageURL(imageData.blankiphoneDark, 'blankiphone_dark'),
+                testImageURL(imageData.headerdark, 'headerdark'),
+                testImageURL(imageData.headerlight, 'headerlight')
+            ]).then(results => {
+                console.log("Image preload complete:", 
+                    results.filter(r => r).length + " of " + results.length + " successful");
+            });
+        }
         
-        // imageData.blankiphone = 'data:image/png;base64,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M0 0H300V300H0V0Z" fill="#037EE5"/> </svg> '; // Replace with actual base64 string from @blankiphone_png
-        // imageData.headerdark = 'data:image/png;base64,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M0 0H300V300H0V0Z" fill="#111111"/> </svg> ';   // Replace with actual base64 string from @headerdark_png
-        // imageData.headerlight = 'data:image/png;base64,<?xml version="1.0" encoding="UTF-8" standalone="no"?> <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M0 0H300V300H0V0Z" fill="#EEEEEE"/> </svg> '; // Replace with actual base64 string from @headerlight_png
+        // Run image preload when page loads
+        window.addEventListener('load', preloadImages);
+        
+        // Image verification function for debugging
+        function verifyImages() {
+            console.log("Image file paths:");
+            console.log("- blankiphone:", imageData.blankiphone);
+            console.log("- blankiphoneDark:", imageData.blankiphoneDark);
+            console.log("- headerdark:", imageData.headerdark);
+            console.log("- headerlight:", imageData.headerlight);
+        }
+        
+        // Run verification right away
+        verifyImages();
 
         // Event Listeners
         fileInput.addEventListener('change', handleFileSelect);
@@ -1261,6 +1306,8 @@
                     if (allReviewsData.length > 0) {
                         starFilterSection.style.display = 'block';
                         setupFilterControlListeners();
+                        // Automatically apply filters to show results immediately
+                        applyTableFilters(true);
                     } else {
                         starFilterSection.style.display = 'none'; // No data to filter yet
                     }
@@ -1487,7 +1534,7 @@
                 } else {
                     reviewsContainer.innerHTML = '<p style="text-align: center; margin: 2rem 0; color: #666;">No reviews to display. Please upload a CSV file.</p>';
                 }
-                return;
+                 return;
             }
             
             // Display the matching reviews
@@ -1534,6 +1581,7 @@
             targetElement.innerHTML = ''; // Clear target
             const RENDER_STYLES = {
                 iphoneSim: { width: '375px', height: '812px' }, // Restored to original size
+                iphoneSimDark: { width: '375px', height: '812px' }, // Dark mode iPhone
                 fullscreenLight: { width: '1200px', height: '750px' },
                 fullscreenDark: { width: '1200px', height: '750px' }
             };
@@ -1541,13 +1589,25 @@
             const outerDiv = document.createElement('div');
             let contentArea;
 
-            if (format === 'iphoneSim') {
-                outerDiv.style.width = RENDER_STYLES.iphoneSim.width;
-                outerDiv.style.height = RENDER_STYLES.iphoneSim.height;
-                outerDiv.style.backgroundImage = `url('${imageData.blankiphone}')`;
+            if (format === 'iphoneSim' || format === 'iphoneSimDark') {
+                const isDarkMode = format === 'iphoneSimDark';
+                
+                outerDiv.style.width = RENDER_STYLES[format].width;
+                outerDiv.style.height = RENDER_STYLES[format].height;
+                
+                // Use the correct background image based on mode
+                // Make sure to force correct image selection based on format
+                const bgImagePath = format === 'iphoneSimDark' ? 'blankiphone_dark.png' : 'blankiphone.png';
+                
+                // Debug: Log which image is being used
+                console.log(`Using image for ${format}:`, bgImagePath);
+                
+                // Apply background image
+                outerDiv.style.backgroundImage = `url('${bgImagePath}')`;
                 outerDiv.style.backgroundSize = 'contain';
                 outerDiv.style.backgroundRepeat = 'no-repeat';
                 outerDiv.style.backgroundPosition = 'center';
+                
                 outerDiv.style.position = 'relative'; // For absolute positioning of content
                 outerDiv.style.overflow = 'hidden';
 
@@ -1557,10 +1617,10 @@
                 reviewCard.style.top = '23%'; // Position to match sample
                 reviewCard.style.left = '5%';
                 reviewCard.style.right = '5%';
-                reviewCard.style.backgroundColor = '#f0f0f0'; // Light gray background
+                reviewCard.style.backgroundColor = isDarkMode ? '#333' : '#f0f0f0'; // Background color based on mode
                 reviewCard.style.borderRadius = '12px'; // Rounded corners
                 reviewCard.style.padding = '15px';
-                reviewCard.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+                reviewCard.style.boxShadow = isDarkMode ? '0 1px 3px rgba(0,0,0,0.3)' : '0 1px 3px rgba(0,0,0,0.1)';
                 reviewCard.style.zIndex = '1'; // Ensure it's behind content
                 outerDiv.appendChild(reviewCard);
                 
@@ -1568,15 +1628,14 @@
                 contentArea = document.createElement('div');
                 contentArea.style.overflowY = 'auto';
                 contentArea.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif';
-                contentArea.style.color = '#000';
+                contentArea.style.color = isDarkMode ? '#fff' : '#000'; // Text color based on mode
                 contentArea.style.wordBreak = 'break-word';
                 contentArea.style.position = 'relative'; // Ensure proper stacking
                 contentArea.style.zIndex = '2'; // Higher than reviewCard
                 
-                // Add contentArea as a child of reviewCard instead of directly to outerDiv
+                // Add contentArea as a child of reviewCard
                 reviewCard.appendChild(contentArea);
             } else if (format === 'fullscreenLight' || format === 'fullscreenDark') {
-                // Simplified fullscreen view
                 outerDiv.style.width = RENDER_STYLES[format].width;
                 outerDiv.style.height = RENDER_STYLES[format].height;
                 outerDiv.style.position = 'relative';
@@ -1595,12 +1654,38 @@
                 contentContainer.style.flexDirection = 'column';
                 contentContainer.style.flex = '1';
                 contentContainer.style.boxSizing = 'border-box';
-                // Removed maxWidth limit
                 outerDiv.appendChild(contentContainer);
                 
-                // Header image - simple implementation filling full width
+                // Header image - force the correct image path
                 const headerImg = document.createElement('img');
-                headerImg.src = (format === 'fullscreenLight' ? imageData.headerlight : imageData.headerdark);
+                const headerSrc = format === 'fullscreenDark' ? 'headerdark.png' : 'headerlight.png';
+                
+                // Debug: Log which header image is being used
+                console.log(`Using header image for ${format}:`, headerSrc);
+                
+                // Setup header image with error handling
+                headerImg.onerror = function() {
+                    console.error(`Failed to load header image: ${headerSrc}`);
+                    // Hide the broken image element
+                    headerImg.style.display = 'none'; 
+                    // Fallback style
+                    const fallbackHeader = document.createElement('div');
+                    fallbackHeader.style.width = '100%';
+                    fallbackHeader.style.height = '80px';
+                    fallbackHeader.style.backgroundColor = format === 'fullscreenLight' ? '#f0f0f0' : '#333333';
+                    fallbackHeader.style.marginBottom = '20px';
+                    fallbackHeader.style.display = 'flex';
+                    fallbackHeader.style.alignItems = 'center';
+                    fallbackHeader.style.justifyContent = 'center';
+                    fallbackHeader.innerHTML = '<h2 style="margin:0; color:' + 
+                        (format === 'fullscreenLight' ? '#333' : '#eee') + 
+                        ';">Review Details</h2>';
+                    // Insert the fallback before the (now hidden) image
+                    contentContainer.insertBefore(fallbackHeader, headerImg); 
+                };
+                
+                // Set src after defining the error handler
+                headerImg.src = headerSrc;
                 headerImg.style.width = '100%'; // Fill horizontally
                 headerImg.style.height = 'auto'; // Keep proportions
                 headerImg.style.objectFit = 'contain'; // Don't crop
@@ -1625,57 +1710,92 @@
             // Common review structure for single views
             const titleEl = document.createElement('div');
             titleEl.textContent = review.title;
-            titleEl.style.fontSize = format === 'iphoneSim' ? '18px' : '20px';
-            titleEl.style.fontWeight = '600';
-            titleEl.style.marginBottom = format === 'iphoneSim' ? '5px' : '8px';
-            if (format === 'fullscreenDark') titleEl.style.color = '#fff'; 
-
-            const authorEl = document.createElement('div');
-            authorEl.style.textAlign = format === 'iphoneSim' ? 'right' : 'left';
-            authorEl.style.fontSize = format === 'iphoneSim' ? '12px' : '12px';
-            authorEl.style.color = format === 'iphoneSim' ? '#666' : (format === 'fullscreenDark' ? '#ccc' : '#555');
-            authorEl.style.marginBottom = format === 'iphoneSim' ? '4px' : '6px';
-            authorEl.textContent = format === 'iphoneSim' ? review.author : `${review.author} - ${review.date}`;
-
-            // For iPhone sim, add date on a separate line aligned right
-            if (format === 'iphoneSim') {
-                const dateEl = document.createElement('div');
-                dateEl.style.textAlign = 'right';
-                dateEl.style.fontSize = '12px';
-                dateEl.style.color = '#666';
-                dateEl.textContent = review.date;
-                authorEl.appendChild(dateEl);
-            }
 
             const starsEl = document.createElement('div');
             starsEl.textContent = '★'.repeat(Math.min(5, review.rating));
             starsEl.style.color = '#FFB800';
-            starsEl.style.fontSize = format === 'iphoneSim' ? '14px' : '16px';
-            starsEl.style.marginBottom = format === 'iphoneSim' ? '8px' : '8px';
 
             const contentEl = document.createElement('div');
             contentEl.textContent = review.content.replace(/[\r\n]+/g, '\n').trim();
             contentEl.style.whiteSpace = 'pre-line';
-            contentEl.style.fontSize = format === 'iphoneSim' ? '14px' : '14px';
-            contentEl.style.lineHeight = format === 'iphoneSim' ? '1.4' : '1.5';
-            if (format === 'fullscreenDark') contentEl.style.color = '#eee';
 
-            // For iPhone, arrange elements to match the sample image
-            if (format === 'iphoneSim') {
+            // Style elements based on format
+            if (format === 'iphoneSim' || format === 'iphoneSimDark') {
+                const isDarkMode = format === 'iphoneSimDark';
+                
+                titleEl.style.fontSize = '18px';
+                titleEl.style.fontWeight = '600';
+                titleEl.style.marginBottom = '5px';
+                titleEl.style.color = isDarkMode ? '#fff' : '#000';
+
+                // Author info with right alignment
+                const authorContainer = document.createElement('div');
+                authorContainer.style.display = 'flex';
+                authorContainer.style.justifyContent = 'space-between';
+                authorContainer.style.marginBottom = '8px';
+                
+                const authorDateEl = document.createElement('div');
+                authorDateEl.style.textAlign = 'right';
+                authorDateEl.style.fontSize = '12px';
+                authorDateEl.style.color = isDarkMode ? '#ccc' : '#666';
+                
+                const dateSpan = document.createElement('div');
+                dateSpan.textContent = review.date;
+                authorDateEl.appendChild(dateSpan);
+                
+                const authorSpan = document.createElement('div');
+                authorSpan.textContent = review.author;
+                authorDateEl.appendChild(authorSpan);
+                
+                // Create header with title and author
                 const headerDiv = document.createElement('div');
                 headerDiv.style.display = 'flex';
                 headerDiv.style.justifyContent = 'space-between';
-                headerDiv.style.marginBottom = '8px';
+                headerDiv.appendChild(titleEl);
+                headerDiv.appendChild(authorDateEl);
+
+                starsEl.style.fontSize = '14px';
+                starsEl.style.marginBottom = '8px';
                 
-                const titleContainer = document.createElement('div');
-                titleContainer.appendChild(titleEl);
-                headerDiv.appendChild(titleContainer);
-                headerDiv.appendChild(authorEl);
+                contentEl.style.fontSize = '14px';
+                contentEl.style.lineHeight = '1.4';
+                contentEl.style.color = isDarkMode ? '#eee' : '#000';
                 
+                // Add the elements in the right order
                 contentArea.appendChild(headerDiv);
                 contentArea.appendChild(starsEl);
                 contentArea.appendChild(contentEl);
-            } else {
+                
+                // Add heart emoji if content contains it
+                if (review.content.includes('❤') || review.content.includes('💗') || 
+                    review.content.includes('♥') || review.content.includes('💕')) {
+                    const heartEl = document.createElement('div');
+                    heartEl.textContent = '💗';
+                    heartEl.style.fontSize = '20px';
+                    heartEl.style.marginTop = '10px';
+                    contentArea.appendChild(heartEl);
+                }
+            } else if (format === 'fullscreenLight' || format === 'fullscreenDark') {
+                // Fullscreen styling
+                titleEl.style.fontSize = '20px';
+                titleEl.style.fontWeight = '600';
+                titleEl.style.marginBottom = '8px';
+                if (format === 'fullscreenDark') titleEl.style.color = '#fff';
+
+                const authorEl = document.createElement('div');
+                authorEl.style.textAlign = 'left';
+                authorEl.style.fontSize = '12px';
+                authorEl.style.color = format === 'fullscreenDark' ? '#ccc' : '#555';
+                authorEl.style.marginBottom = '6px';
+                authorEl.textContent = `${review.author} - ${review.date}`;
+
+                starsEl.style.fontSize = '16px';
+                starsEl.style.marginBottom = '8px';
+
+                contentEl.style.fontSize = '14px';
+                contentEl.style.lineHeight = '1.5';
+            if (format === 'fullscreenDark') contentEl.style.color = '#eee';
+
             contentArea.appendChild(titleEl);
                 contentArea.appendChild(authorEl);
             contentArea.appendChild(starsEl);
@@ -1683,7 +1803,7 @@
             }
             
             if (forExport) {
-                 targetElement.appendChild(outerDiv);
+                targetElement.appendChild(outerDiv);
             } else {
                 targetElement.appendChild(outerDiv);
             }
